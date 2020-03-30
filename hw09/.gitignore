@@ -18,6 +18,7 @@ time.tmp
 # Toplevel User-specific files
 CMakeLists.txt
 .idea/
+*.idea/
 
 # User-specific stuff
 .idea/**/workspace.xml
