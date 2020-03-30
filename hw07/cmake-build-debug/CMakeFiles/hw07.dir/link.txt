@@ -1,0 +1,1 @@
+/usr/bin/cc -g   CMakeFiles/hw07.dir/tools/check-sorted.c.o CMakeFiles/hw07.dir/tools/gen-input.c.o CMakeFiles/hw07.dir/tools/print-data.c.o CMakeFiles/hw07.dir/barrier.c.o CMakeFiles/hw07.dir/float_vec.c.o CMakeFiles/hw07.dir/ssort.c.o CMakeFiles/hw07.dir/utils.c.o  -o hw07 

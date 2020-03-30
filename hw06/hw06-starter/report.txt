@@ -1,0 +1,11 @@
+Local Machine:
+	Debian, Intel i7 9th Gen Core, 8 cores, 20 GB RAM
+
+CCIS Machine:
+	"CentOS Linux", i7 Core, 48 cores, 187 GB RAM	
+
+On the CCIS computer, the binary that i scp'ed over kept seg faulting or entering deadlock.
+
+Sample Sort parallel-izes at around 33% per portion. Accodring to Amdahl's law, or lower amount of CPU's, sample sort with parallel processes will have a relatively useufl speed up. But as the amount of CPU's increases, that speedup yeild will reach an asymptote. However, according to Gustafson's Law, speed up is linear no matter the parallel portion. So sample sort may be useful to run with the parallel set up according to Gustafson.
+
+// TODO: replace graph.png with real graph

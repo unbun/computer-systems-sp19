@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="unnas_hw08"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/home/unnas/personal/systems/hw08/unnas-hw08/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/unnas/personal/systems/hw08/unnas-hw08/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/unnas/personal/systems/hw08/unnas-hw08/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/unnas/personal/systems/hw08/unnas-hw08/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/unnas/personal/systems/hw08/unnas-hw08/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/home/unnas/personal/systems/hw08/unnas-hw08/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/unnas/personal/systems/hw08/unnas-hw08/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/unnas/personal/systems/hw08/unnas-hw08/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/unnas/personal/systems/hw08/unnas-hw08/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/unnas/personal/systems/hw08/unnas-hw08/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="unnas_hw08">
+				<Option output="/home/unnas/personal/systems/hw08/unnas-hw08/cmake-build-debug/unnas_hw08" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/unnas/personal/systems/hw08/unnas-hw08/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/unnas/personal/systems/hw08/unnas-hw08/."/>
+					<Add directory="/home/unnas/personal/systems/hw08/unnas-hw08/tests"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/unnas/personal/systems/hw08/unnas-hw08/cmake-build-debug/Makefile&quot;  VERBOSE=1 unnas_hw08"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/unnas/personal/systems/hw08/unnas-hw08/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/unnas/personal/systems/hw08/unnas-hw08/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/unnas/personal/systems/hw08/unnas-hw08/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="unnas_hw08/fast">
+				<Option output="/home/unnas/personal/systems/hw08/unnas-hw08/cmake-build-debug/unnas_hw08" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/unnas/personal/systems/hw08/unnas-hw08/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/unnas/personal/systems/hw08/unnas-hw08/."/>
+					<Add directory="/home/unnas/personal/systems/hw08/unnas-hw08/tests"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/unnas/personal/systems/hw08/unnas-hw08/cmake-build-debug/Makefile&quot;  VERBOSE=1 unnas_hw08/fast"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/unnas/personal/systems/hw08/unnas-hw08/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/unnas/personal/systems/hw08/unnas-hw08/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/unnas/personal/systems/hw08/unnas-hw08/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/home/unnas/personal/systems/hw08/unnas-hw08/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/unnas/personal/systems/hw08/unnas-hw08/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/unnas/personal/systems/hw08/unnas-hw08/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/unnas/personal/systems/hw08/unnas-hw08/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/unnas/personal/systems/hw08/unnas-hw08/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/home/unnas/personal/systems/hw08/unnas-hw08/Makefile">
+			<Option target="unnas_hw08"/>
+		</Unit>
+		<Unit filename="/home/unnas/personal/systems/hw08/unnas-hw08/hmalloc.c">
+			<Option target="unnas_hw08"/>
+		</Unit>
+		<Unit filename="/home/unnas/personal/systems/hw08/unnas-hw08/hmalloc.h">
+			<Option target="unnas_hw08"/>
+		</Unit>
+		<Unit filename="/home/unnas/personal/systems/hw08/unnas-hw08/test.pl">
+			<Option target="unnas_hw08"/>
+		</Unit>
+		<Unit filename="/home/unnas/personal/systems/hw08/unnas-hw08/tests/01-hello.c">
+			<Option target="unnas_hw08"/>
+		</Unit>
+		<Unit filename="/home/unnas/personal/systems/hw08/unnas-hw08/tests/02-array-sum.c">
+			<Option target="unnas_hw08"/>
+		</Unit>
+		<Unit filename="/home/unnas/personal/systems/hw08/unnas-hw08/tests/03-list-sum.c">
+			<Option target="unnas_hw08"/>
+		</Unit>
+		<Unit filename="/home/unnas/personal/systems/hw08/unnas-hw08/tests/04-two-lists.c">
+			<Option target="unnas_hw08"/>
+		</Unit>
+		<Unit filename="/home/unnas/personal/systems/hw08/unnas-hw08/tests/05-many-sizes.c">
+			<Option target="unnas_hw08"/>
+		</Unit>
+		<Unit filename="/home/unnas/personal/systems/hw08/unnas-hw08/tests/Makefile">
+			<Option target="unnas_hw08"/>
+		</Unit>
+		<Unit filename="/home/unnas/personal/systems/hw08/unnas-hw08/tests/README.tests">
+			<Option target="unnas_hw08"/>
+		</Unit>
+		<Unit filename="/home/unnas/personal/systems/hw08/unnas-hw08/tests/tools.h">
+			<Option target="unnas_hw08"/>
+		</Unit>
+		<Unit filename="/home/unnas/personal/systems/hw08/unnas-hw08/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

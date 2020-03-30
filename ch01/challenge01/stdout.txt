@@ -1,0 +1,22 @@
+[DEBUG]		file name: tests/sample.txt
+ambassador
+flown
+iguana
+introduces
+plenty
+pontiff
+reactivates
+remorselessly
+revolutionized
+underplays
+[DEBUG]		file name: tests/sample.txt
+ambassador
+flown
+iguana
+introduces
+plenty
+pontiff
+reactivates
+remorselessly
+revolutionized
+underplays
