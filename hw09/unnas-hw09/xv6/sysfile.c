@@ -46,6 +46,7 @@ fdalloc(struct file *f)
   for(fd = 0; fd < NOFILE; fd++){
     if(curproc->ofile[fd] == 0){
       curproc->ofile[fd] = f;
+      iostats_clear(f->byte_mem);
       return fd;
     }
   }
@@ -76,12 +77,7 @@ sys_read(void)
   if(argfd(0, 0, &f) < 0 || argint(2, &n) < 0 || argptr(1, &p, n) < 0)
     return -1;
 
-  int rv = fileread(f, p, n);
-  if(rv == 0){
-      f->io->read_bytes += n;
-  }
-
-  return rv;
+  return fileread(f, p, n);
 }
 
 int
@@ -94,12 +90,7 @@ sys_write(void)
   if(argfd(0, 0, &f) < 0 || argint(2, &n) < 0 || argptr(1, &p, n) < 0)
     return -1;
 
-  int rv = filewrite(f, p, n);
-  if(rv == 0) {
-    f->io->write_bytes += n;
-  }
-
-  return rv;
+  return filewrite(f, p, n);;
 }
 
 int
@@ -110,6 +101,12 @@ sys_close(void)
 
   if(argfd(0, &fd, &f) < 0)
     return -1;
+
+  struct iostats *is = f->byte_mem;
+  is->read_bytes = 0;
+  is->write_bytes = 0;
+  f->byte_mem = is;
+
   myproc()->ofile[fd] = 0;
   fileclose(f);
   return 0;
@@ -126,16 +123,16 @@ sys_fstat(void)
   return filestat(f, st);
 }
 
-// Direct system call to C code for file's io data
+// Direct system call to get file's io data
 int
-sys_getiostat(void)
+sys_getiostats(void)
 {
   struct file *f;
   struct iostats *st;
 
   if(argfd(0, 0, &f) < 0 || argptr(1, (void*)&st, sizeof(*st)) < 0)
     return -1;
-  return fileiostat(f, st);
+  return fileiostats(f, st);
 }
 
 // Create the path new as a link to the same inode as old.
@@ -313,7 +310,6 @@ sys_open(void)
   int fd, omode;
   struct file *f;
   struct inode *ip;
-  struct iostats *io_stats;
 
   if(argstr(0, &path) < 0 || argint(1, &omode) < 0)
     return -1;
@@ -349,14 +345,14 @@ sys_open(void)
   iunlock(ip);
   end_op();
 
+
   f->type = FD_INODE;
   f->ip = ip;
   f->off = 0;
   f->readable = !(omode & O_WRONLY);
   f->writable = (omode & O_WRONLY) || (omode & O_RDWR);
-  io_stats->read_bytes = 0;
-  io_stats->write_bytes = 0;
-  f->io = io_stats;
+
+
   return fd;
 }
 
@@ -441,9 +437,13 @@ sys_exec(void)
       argv[i] = 0;
       break;
     }
+
     if(fetchstr(uarg, &argv[i]) < 0)
       return -1;
   }
+
+  filecleariostats();
+
   return exec(path, argv);
 }
 

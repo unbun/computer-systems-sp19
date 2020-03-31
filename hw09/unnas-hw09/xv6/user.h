@@ -1,5 +1,6 @@
 struct stat;
 struct rtcdate;
+struct iostats;
 
 // system calls
 int fork(void);
@@ -24,7 +25,7 @@ char* sbrk(int);
 int sleep(int);
 int uptime(void);
 int halt(void);
-int getiostat(int fd, struct stat*);
+int getiostats(int fd, struct iostats*);
 
 // ulib.c
 int stat(const char*, struct stat*);

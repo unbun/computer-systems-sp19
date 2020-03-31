@@ -22,6 +22,17 @@ fileinit(void)
   initlock(&ftable.lock, "ftable");
 }
 
+void
+filecleariostats(void)
+{
+  struct file *f;
+
+  for(f = ftable.file; f < ftable.file + NFILE; f++) {
+    iostats_clear(f->byte_mem);
+  }
+  return;
+}
+
 // Allocate a file structure.
 struct file*
 filealloc(void)
@@ -32,6 +43,12 @@ filealloc(void)
   for(f = ftable.file; f < ftable.file + NFILE; f++){
     if(f->ref == 0){
       f->ref = 1;
+
+      struct iostats *is = (struct iostats*)(f + sizeof(f) + 0x84);
+      iostats_set_read(is, 0);
+      iostats_set_write(is, 0);
+      f->byte_mem = is;
+
       release(&ftable.lock);
       return f;
     }
@@ -93,15 +110,11 @@ filestat(struct file *f, struct stat *st)
 }
 
 int
-fileiostat(struct file *f, struct iostats *st)
+fileiostats(struct file *f, struct iostats *st)
 {
-  if(f->type == FD_INODE){
-    ilock(f->ip);
-    iostatsi(f->ip, st);
-    iunlock(f->ip);
-    return 0;
-  }
-  return -1;
+  iostats_copy(f->byte_mem, st);
+
+  return 0;
 }
 
 // Read from file f.
@@ -110,17 +123,25 @@ fileread(struct file *f, char *addr, int n)
 {
   int r;
 
+
+
   if(f->readable == 0)
     return -1;
+
+  uint rv = n;
   if(f->type == FD_PIPE)
-    return piperead(f->pipe, addr, n);
+    rv = piperead(f->pipe, addr, n);
   if(f->type == FD_INODE){
     ilock(f->ip);
     if((r = readi(f->ip, addr, f->off, n)) > 0)
       f->off += r;
     iunlock(f->ip);
-    return r;
+    rv = r;
   }
+
+  iostats_incr_read(f->byte_mem, rv);
+  return rv;
+
   panic("fileread");
 }
 
@@ -133,6 +154,11 @@ filewrite(struct file *f, char *addr, int n)
 
   if(f->writable == 0)
     return -1;
+
+  // cprintf("%d write", f);
+
+  iostats_incr_write(f->byte_mem, n);
+
   if(f->type == FD_PIPE)
     return pipewrite(f->pipe, addr, n);
   if(f->type == FD_INODE){

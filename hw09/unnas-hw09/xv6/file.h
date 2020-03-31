@@ -1,5 +1,3 @@
-#include stat.h
-
 struct file {
   enum { FD_NONE, FD_PIPE, FD_INODE } type;
   int ref; // reference count
@@ -8,6 +6,7 @@ struct file {
   struct pipe *pipe;
   struct inode *ip;
   uint off;
+  struct iostats* byte_mem;    // number of bytes read and written
 };
 
 
@@ -25,9 +24,6 @@ struct inode {
   short nlink;
   uint size;
   uint addrs[NDIRECT+1];
-
-  uint bytes_read;    // number of bytes read
-  uint bytes_written; // number of bytes written
 };
 
 // table mapping major device number to

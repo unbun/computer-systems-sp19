@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true">
-    <generated />
+    <generated>
+      <config projectName="hw09" targetName="hw09" />
+    </generated>
   </component>
   <component name="CMakeSettings">
     <configurations>
@@ -18,6 +20,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
@@ -52,6 +55,7 @@
       <updated>1585602383261</updated>
       <workItem from="1585602384472" duration="73000" />
       <workItem from="1585607627860" duration="407000" />
+      <workItem from="1585608035844" duration="190000" />
     </task>
     <servers />
   </component>

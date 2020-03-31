@@ -31,12 +31,11 @@ struct file*    filealloc(void);
 void            fileclose(struct file*);
 struct file*    filedup(struct file*);
 void            fileinit(void);
+void			filecleariostats(void);
 int             fileread(struct file*, char*, int n);
 int             filestat(struct file*, struct stat*);
+int 			fileiostats(struct file *f, struct iostats *st);
 int             filewrite(struct file*, char*, int n);
-
-// getiostats.c
-int 			getiostat(struct file*, struct iostats*);
 
 // fs.c
 void            readsb(int dev, struct superblock *sb);
@@ -55,6 +54,12 @@ struct inode*   namei(char*);
 struct inode*   nameiparent(char*, char*);
 int             readi(struct inode*, char*, uint, uint);
 void            stati(struct inode*, struct stat*);
+void            iostats_copy(struct iostats *is, struct iostats *st);
+void			iostats_set_read(struct iostats *is, uint n);
+void			iostats_set_write(struct iostats *is, uint n);
+void			iostats_incr_read(struct iostats *is, uint n);
+void			iostats_incr_write(struct iostats *is, uint n);
+void			iostats_clear(struct iostats *is);
 int             writei(struct inode*, char*, uint, uint);
 
 // ide.c

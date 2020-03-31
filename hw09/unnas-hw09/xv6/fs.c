@@ -446,14 +446,46 @@ stati(struct inode *ip, struct stat *st)
   st->size = ip->size;
 }
 
-// Copy iostats information from inode.
-// Caller must hold ip->lock.
+//PAGEBREAK!
+
+//////////////////////////////////////////////////////
+//////////////// io stats functions //////////////////
 void
-iostatsi(struct inode *ip, struct iostat st)
+iostats_copy(struct iostats *is, struct iostats *st)
 {
-  st->read_bytes = ip->bytes_read;
-  st->write_bytes = ip->bytes_written;
+  st->read_bytes = is->read_bytes;
+  st->write_bytes = is->write_bytes;
 }
+
+void
+iostats_incr_read(struct iostats *is, uint n){
+  is->read_bytes += n;
+}
+
+
+void
+iostats_incr_write(struct iostats *is, uint n){
+  is->write_bytes += n;
+}
+void
+iostats_set_read(struct iostats *is, uint n){
+  is->read_bytes = n;
+}
+
+void
+iostats_set_write(struct iostats *is, uint n){
+  is->write_bytes = n;
+}
+
+void
+iostats_clear(struct iostats *is){
+  is->read_bytes = 0;
+  is->write_bytes = 0;
+}
+
+//////////////// io stats functions //////////////////
+//////////////////////////////////////////////////////
+
 
 //PAGEBREAK!
 // Read data from inode.
