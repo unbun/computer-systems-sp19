@@ -1,1 +1,0 @@
-/usr/bin/cc -g   CMakeFiles/unnas_hw08.dir/tests/01-hello.c.o CMakeFiles/unnas_hw08.dir/tests/02-array-sum.c.o CMakeFiles/unnas_hw08.dir/tests/03-list-sum.c.o CMakeFiles/unnas_hw08.dir/tests/04-two-lists.c.o CMakeFiles/unnas_hw08.dir/tests/05-many-sizes.c.o CMakeFiles/unnas_hw08.dir/hmalloc.c.o  -o unnas_hw08 
