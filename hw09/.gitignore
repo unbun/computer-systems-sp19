@@ -14,6 +14,7 @@ frag-opt
 frag-sys
 outp.tmp
 time.tmp
+*.tar.gz
 
 # Toplevel User-specific files
 CMakeLists.txt
