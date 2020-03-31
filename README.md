@@ -1,2 +1,1 @@
-# unbun
-computer-systems-sp19
+# Computer Systems Spring 2019
