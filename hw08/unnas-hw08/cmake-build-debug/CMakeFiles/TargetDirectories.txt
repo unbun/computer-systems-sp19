@@ -1,3 +1,0 @@
-/home/unnas/personal/systems/hw08/unnas-hw08/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/unnas/personal/systems/hw08/unnas-hw08/cmake-build-debug/CMakeFiles/unnas_hw08.dir
-/home/unnas/personal/systems/hw08/unnas-hw08/cmake-build-debug/CMakeFiles/edit_cache.dir
