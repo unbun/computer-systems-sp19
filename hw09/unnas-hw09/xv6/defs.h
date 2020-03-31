@@ -31,10 +31,10 @@ struct file*    filealloc(void);
 void            fileclose(struct file*);
 struct file*    filedup(struct file*);
 void            fileinit(void);
-void			filecleariostats(void);
+void			filecleariostats(void); // clear the io stat tracking for exec
 int             fileread(struct file*, char*, int n);
 int             filestat(struct file*, struct stat*);
-int 			fileiostats(struct file *f, struct iostats *st);
+int 			fileiostats(struct file *f, struct iostats *st); // executes the sycall for getiostats
 int             filewrite(struct file*, char*, int n);
 
 // fs.c
@@ -54,13 +54,16 @@ struct inode*   namei(char*);
 struct inode*   nameiparent(char*, char*);
 int             readi(struct inode*, char*, uint, uint);
 void            stati(struct inode*, struct stat*);
+int             writei(struct inode*, char*, uint, uint);
+
+// iostats helpers (in fs.c)
+int 			iostats_alloc(struct file* f);
 void            iostats_copy(struct iostats *is, struct iostats *st);
 void			iostats_set_read(struct iostats *is, uint n);
 void			iostats_set_write(struct iostats *is, uint n);
 void			iostats_incr_read(struct iostats *is, uint n);
 void			iostats_incr_write(struct iostats *is, uint n);
 void			iostats_clear(struct iostats *is);
-int             writei(struct inode*, char*, uint, uint);
 
 // ide.c
 void            ideinit(void);

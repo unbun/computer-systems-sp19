@@ -46,7 +46,9 @@ fdalloc(struct file *f)
   for(fd = 0; fd < NOFILE; fd++){
     if(curproc->ofile[fd] == 0){
       curproc->ofile[fd] = f;
-      iostats_clear(f->byte_mem);
+
+      // clear the file's memory when its freshly allocated
+      iostats_clear(f->byte_mem); 
       return fd;
     }
   }
@@ -77,7 +79,7 @@ sys_read(void)
   if(argfd(0, 0, &f) < 0 || argint(2, &n) < 0 || argptr(1, &p, n) < 0)
     return -1;
 
-  return fileread(f, p, n);
+  return fileread(f, p, n); // func will hanle iostats updating
 }
 
 int
@@ -90,7 +92,7 @@ sys_write(void)
   if(argfd(0, 0, &f) < 0 || argint(2, &n) < 0 || argptr(1, &p, n) < 0)
     return -1;
 
-  return filewrite(f, p, n);;
+  return filewrite(f, p, n); // func will handle iostats updating
 }
 
 int
@@ -103,9 +105,8 @@ sys_close(void)
     return -1;
 
   struct iostats *is = f->byte_mem;
-  is->read_bytes = 0;
-  is->write_bytes = 0;
-  f->byte_mem = is;
+  iostats_clear(is);
+  f->byte_mem = is; // sanity check that iostats get cleared
 
   myproc()->ofile[fd] = 0;
   fileclose(f);
@@ -123,7 +124,7 @@ sys_fstat(void)
   return filestat(f, st);
 }
 
-// Direct system call to get file's io data
+// System call to get file's io data (based on fstat system call)
 int
 sys_getiostats(void)
 {
@@ -132,6 +133,7 @@ sys_getiostats(void)
 
   if(argfd(0, 0, &f) < 0 || argptr(1, (void*)&st, sizeof(*st)) < 0)
     return -1;
+
   return fileiostats(f, st);
 }
 
@@ -345,14 +347,11 @@ sys_open(void)
   iunlock(ip);
   end_op();
 
-
   f->type = FD_INODE;
   f->ip = ip;
   f->off = 0;
   f->readable = !(omode & O_WRONLY);
   f->writable = (omode & O_WRONLY) || (omode & O_RDWR);
-
-
   return fd;
 }
 
@@ -442,6 +441,7 @@ sys_exec(void)
       return -1;
   }
 
+  // clear all files in the table on successful exec()
   filecleariostats();
 
   return exec(path, argv);

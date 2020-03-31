@@ -22,6 +22,7 @@ fileinit(void)
   initlock(&ftable.lock, "ftable");
 }
 
+// clear the iostats for every file in the table
 void
 filecleariostats(void)
 {
@@ -44,10 +45,11 @@ filealloc(void)
     if(f->ref == 0){
       f->ref = 1;
 
-      struct iostats *is = (struct iostats*)(f + sizeof(f) + 0x84);
-      iostats_set_read(is, 0);
-      iostats_set_write(is, 0);
-      f->byte_mem = is;
+      // Allocate the iostats poitner for the mew file
+      int rv = iostats_alloc(f);
+      if(rv < 0){
+        return 0;
+      }
 
       release(&ftable.lock);
       return f;
@@ -109,6 +111,7 @@ filestat(struct file *f, struct stat *st)
   return -1;
 }
 
+// Get the iostates of the given file (implementation of getiostats syscall)
 int
 fileiostats(struct file *f, struct iostats *st)
 {
@@ -139,6 +142,7 @@ fileread(struct file *f, char *addr, int n)
     rv = r;
   }
 
+  // increment the file's read value by the amount read
   iostats_incr_read(f->byte_mem, rv);
   return rv;
 
@@ -155,8 +159,8 @@ filewrite(struct file *f, char *addr, int n)
   if(f->writable == 0)
     return -1;
 
-  // cprintf("%d write", f);
-
+  // increment the writable file's write value by the 
+  // amount that we're going to read
   iostats_incr_write(f->byte_mem, n);
 
   if(f->type == FD_PIPE)
