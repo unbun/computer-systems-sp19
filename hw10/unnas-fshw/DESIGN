@@ -1,0 +1,17 @@
+Running the FS:
+
+
+
+
+File System Layout:
+
+  - 1MB = 256 pages (4k blocks)
+  - page 0 = 256 inodes (each 8 bytes) 
+  	- an array of inodes (for getting inodes)
+  	
+  - page 1 & inode 1 = root directory
+	  - the root directory is just an array of 128 char[16]'s
+	    - max filename length = 15
+	    - ent[0] == '\0' means unused
+
+  - That leaves inodes/blocks #2 - #255 for file
