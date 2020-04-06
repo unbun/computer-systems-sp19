@@ -24,13 +24,19 @@ static int   pages_fd   = -1;
 static void* pages_base =  0;
 
 void
-pages_init(const char* path)
+pages_init(const char* path, int create)
 {
-    pages_fd = open(path, O_CREAT | O_RDWR, 0644);
-    assert(pages_fd != -1);
+    if(create) {
+        pages_fd = open(path, O_CREAT | O_RDWR, 0644);
+        assert(pages_fd != -1);
 
-    int rv = ftruncate(pages_fd, NUFS_SIZE);
-    assert(rv == 0);
+        int rv = ftruncate(pages_fd, NUFS_SIZE);
+        assert(rv == 0);
+    } else {
+        pages_fd = open(path, O_RDWR);
+        assert(pages_fd != -1);
+    }
+    
 
     pages_base = mmap(0, NUFS_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, pages_fd, 0);
     assert(pages_base != MAP_FAILED);
