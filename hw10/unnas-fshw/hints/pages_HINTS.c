@@ -13,9 +13,9 @@
 #include <stdio.h>
 #include <stdint.h>
 
-#include "pages.h"
-#include "util.h"
-#include "bitmap.h"
+#include "pages_HINTS.h"
+#include "util_HINTS.h"
+#include "bitmap_HINTS.h"
 
 const int PAGE_COUNT = 256;
 const int NUFS_SIZE  = 4096 * 256; // 1MB
@@ -24,19 +24,13 @@ static int   pages_fd   = -1;
 static void* pages_base =  0;
 
 void
-pages_init(const char* path, int create)
+pages_init(const char* path)
 {
-    if(create) {
-        pages_fd = open(path, O_CREAT | O_RDWR, 0644);
-        assert(pages_fd != -1);
+    pages_fd = open(path, O_CREAT | O_RDWR, 0644);
+    assert(pages_fd != -1);
 
-        int rv = ftruncate(pages_fd, NUFS_SIZE);
-        assert(rv == 0);
-    } else {
-        pages_fd = open(path, O_RDWR);
-        assert(pages_fd != -1);
-    }
-    
+    int rv = ftruncate(pages_fd, NUFS_SIZE);
+    assert(rv == 0);
 
     pages_base = mmap(0, NUFS_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, pages_fd, 0);
     assert(pages_base != MAP_FAILED);
@@ -94,4 +88,3 @@ free_page(int pnum)
     void* pbm = get_pages_bitmap();
     bitmap_put(pbm, pnum, 0);
 }
-

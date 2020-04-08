@@ -1,7 +1,7 @@
 // based on cs3650 starter code
 
-#ifndef SLIST_H
-#define SLIST_H
+#ifndef SLIST_HINTS_H
+#define SLIST_HINTS_H
 
 typedef struct slist {
     char* data;

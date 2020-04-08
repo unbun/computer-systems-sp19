@@ -19,7 +19,6 @@ bitmap_put(void* bm, int ii, int vv) {
 
   	int* ibm = (int*)bm;
 
-
   	if (vv == 0) {
   		ibm[bb] &= ~(1 << cc);
   	} else {

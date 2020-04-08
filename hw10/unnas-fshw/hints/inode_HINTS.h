@@ -5,20 +5,20 @@
 
 #include "pages.h"
 
-typedef struct inode {
+typedef struct inode_h {
     int refs; // reference count
     int mode; // permission & type
     int size; // bytes
     int ptrs[2]; // direct pointers
     int iptr; // single indirect pointer
-} inode;
+} inode_h;
 
-void print_inode(inode* node);
-inode* get_inode(int inum);
+void print_inode(inode_h* node);
+inode_h* get_inode(int inum);
 int alloc_inode();
 void free_inode();
-int grow_inode(inode* node, int size);
-int shrink_inode(inode* node, int size);
-int inode_get_pnum(inode* node, int fpn);
+int grow_inode(inode_h* node, int size);
+int shrink_inode(inode_h* node, int size);
+int inode_get_pnum(inode_h* node, int fpn);
 
 #endif

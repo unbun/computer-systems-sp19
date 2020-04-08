@@ -1,7 +1,7 @@
 // based on cs3650 starter code
 
-#ifndef UTIL_H
-#define UTIL_H
+#ifndef UTIL_HINTS_H
+#define UTIL_HINTS_H
 
 #include <string.h>
 

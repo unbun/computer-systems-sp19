@@ -1,7 +1,7 @@
 // based on cs3650 starter code
 
-#ifndef NUFS_STORAGE_H
-#define NUFS_STORAGE_H
+#ifndef NUFS_STORAGE_HINTS_H
+#define NUFS_STORAGE_HINTS_H
 
 #include <unistd.h>
 #include <sys/types.h>
