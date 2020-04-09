@@ -42,7 +42,7 @@ main(int argc, char* argv[])
     if (streq(cmd, "new")) {
         assert(argc == 3);
 
-        storage_init(img, 1);
+        storage_init(img); //TODO: hints didn't have a create field... idk what its suppsoed to do
         printf("Created disk image: %s\n", img);
         return 0;
     }
@@ -52,7 +52,7 @@ main(int argc, char* argv[])
         return 1;
     }
 
-    storage_init(img, 0);
+    storage_init(img); //TODO: hints didn't have a create field... idk what its suppsoed to do
 
     if (streq(cmd, "ls")) {
         slist* xs = image_ls_tree("/");
