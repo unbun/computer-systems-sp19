@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <alloca.h>
 
-#include "slist.h"
+#include "slist_HINTS.h"
 
 slist*
 s_cons(const char* text, slist* rest)

@@ -8,7 +8,7 @@
 #include <sys/stat.h>
 #include <time.h>
 
-#include "slist.h"
+#include "slist_HINTS.h"
 
 void   storage_init(const char* path);
 int    storage_stat(const char* path, struct stat* st);

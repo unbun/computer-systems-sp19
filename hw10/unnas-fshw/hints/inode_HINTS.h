@@ -1,10 +1,11 @@
 // based on cs3650 starter code
 
-#ifndef INODE_H
-#define INODE_H
+#ifndef INODE_HINTS_H
+#define INODE_HINTS_H
 
-#include "pages.h"
+#include "pages_HINTS.h"
 
+//inode from hints directory
 typedef struct inode_h {
     int refs; // reference count
     int mode; // permission & type

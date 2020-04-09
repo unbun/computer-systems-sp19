@@ -1,7 +1,7 @@
 // based on cs3650 starter code
 
-#ifndef PAGES_H
-#define PAGES_H
+#ifndef PAGES_HINTS_H
+#define PAGES_HINTS_H
 
 #include <stdio.h>
 
