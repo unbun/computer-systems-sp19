@@ -1,0 +1,3 @@
+[submodule "ch03/challenge03-cs3650"]
+	path = ch03/challenge03-cs3650
+	url = git@github.com:unbun/challenge03-cs3650.git
