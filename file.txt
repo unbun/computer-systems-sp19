@@ -1,0 +1,402 @@
+diff --git a/hw09/unnas-hw09/xv6/Makefile b/hw09/unnas-hw09/xv6/Makefile
+index 8a17f2f..a443461 100644
+--- a/hw09/unnas-hw09/xv6/Makefile
++++ b/hw09/unnas-hw09/xv6/Makefile
+@@ -182,9 +182,6 @@ UPROGS=\
+ 	_usertests\
+ 	_wc\
+ 	_zombie\
+-	_test1\
+-	_test2\
+-	_test3\
+ 
+ fs.img: mkfs README $(UPROGS)
+ 	./mkfs fs.img README $(UPROGS)
+diff --git a/hw09/unnas-hw09/xv6/defs.h b/hw09/unnas-hw09/xv6/defs.h
+index b235b61..82fb982 100644
+--- a/hw09/unnas-hw09/xv6/defs.h
++++ b/hw09/unnas-hw09/xv6/defs.h
+@@ -9,7 +9,6 @@ struct spinlock;
+ struct sleeplock;
+ struct stat;
+ struct superblock;
+-struct iostats;
+ 
+ // bio.c
+ void            binit(void);
+@@ -31,10 +30,8 @@ struct file*    filealloc(void);
+ void            fileclose(struct file*);
+ struct file*    filedup(struct file*);
+ void            fileinit(void);
+-void			filecleariostats(void);
+ int             fileread(struct file*, char*, int n);
+ int             filestat(struct file*, struct stat*);
+-int 			fileiostats(struct file *f, struct iostats *st);
+ int             filewrite(struct file*, char*, int n);
+ 
+ // fs.c
+@@ -54,12 +51,6 @@ struct inode*   namei(char*);
+ struct inode*   nameiparent(char*, char*);
+ int             readi(struct inode*, char*, uint, uint);
+ void            stati(struct inode*, struct stat*);
+-void            iostats_copy(struct iostats *is, struct iostats *st);
+-void			iostats_set_read(struct iostats *is, uint n);
+-void			iostats_set_write(struct iostats *is, uint n);
+-void			iostats_incr_read(struct iostats *is, uint n);
+-void			iostats_incr_write(struct iostats *is, uint n);
+-void			iostats_clear(struct iostats *is);
+ int             writei(struct inode*, char*, uint, uint);
+ 
+ // ide.c
+diff --git a/hw09/unnas-hw09/xv6/file.c b/hw09/unnas-hw09/xv6/file.c
+index 97cbafe..24b32c2 100644
+--- a/hw09/unnas-hw09/xv6/file.c
++++ b/hw09/unnas-hw09/xv6/file.c
+@@ -22,17 +22,6 @@ fileinit(void)
+   initlock(&ftable.lock, "ftable");
+ }
+ 
+-void
+-filecleariostats(void)
+-{
+-  struct file *f;
+-
+-  for(f = ftable.file; f < ftable.file + NFILE; f++) {
+-    iostats_clear(f->byte_mem);
+-  }
+-  return;
+-}
+-
+ // Allocate a file structure.
+ struct file*
+ filealloc(void)
+@@ -43,12 +32,6 @@ filealloc(void)
+   for(f = ftable.file; f < ftable.file + NFILE; f++){
+     if(f->ref == 0){
+       f->ref = 1;
+-
+-      struct iostats *is = (struct iostats*)(f + sizeof(f) + 0x84);
+-      iostats_set_read(is, 0);
+-      iostats_set_write(is, 0);
+-      f->byte_mem = is;
+-
+       release(&ftable.lock);
+       return f;
+     }
+@@ -109,39 +92,23 @@ filestat(struct file *f, struct stat *st)
+   return -1;
+ }
+ 
+-int
+-fileiostats(struct file *f, struct iostats *st)
+-{
+-  iostats_copy(f->byte_mem, st);
+-
+-  return 0;
+-}
+-
+ // Read from file f.
+ int
+ fileread(struct file *f, char *addr, int n)
+ {
+   int r;
+ 
+-
+-
+   if(f->readable == 0)
+     return -1;
+-
+-  uint rv = n;
+   if(f->type == FD_PIPE)
+-    rv = piperead(f->pipe, addr, n);
++    return piperead(f->pipe, addr, n);
+   if(f->type == FD_INODE){
+     ilock(f->ip);
+     if((r = readi(f->ip, addr, f->off, n)) > 0)
+       f->off += r;
+     iunlock(f->ip);
+-    rv = r;
++    return r;
+   }
+-
+-  iostats_incr_read(f->byte_mem, rv);
+-  return rv;
+-
+   panic("fileread");
+ }
+ 
+@@ -154,11 +121,6 @@ filewrite(struct file *f, char *addr, int n)
+ 
+   if(f->writable == 0)
+     return -1;
+-
+-  // cprintf("%d write", f);
+-
+-  iostats_incr_write(f->byte_mem, n);
+-
+   if(f->type == FD_PIPE)
+     return pipewrite(f->pipe, addr, n);
+   if(f->type == FD_INODE){
+diff --git a/hw09/unnas-hw09/xv6/file.h b/hw09/unnas-hw09/xv6/file.h
+index 0950b3a..0990c82 100644
+--- a/hw09/unnas-hw09/xv6/file.h
++++ b/hw09/unnas-hw09/xv6/file.h
+@@ -6,7 +6,6 @@ struct file {
+   struct pipe *pipe;
+   struct inode *ip;
+   uint off;
+-  struct iostats* byte_mem;    // number of bytes read and written
+ };
+ 
+ 
+diff --git a/hw09/unnas-hw09/xv6/fs.c b/hw09/unnas-hw09/xv6/fs.c
+index d7bc933..f77275f 100644
+--- a/hw09/unnas-hw09/xv6/fs.c
++++ b/hw09/unnas-hw09/xv6/fs.c
+@@ -447,47 +447,6 @@ stati(struct inode *ip, struct stat *st)
+ }
+ 
+ //PAGEBREAK!
+-
+-//////////////////////////////////////////////////////
+-//////////////// io stats functions //////////////////
+-void
+-iostats_copy(struct iostats *is, struct iostats *st)
+-{
+-  st->read_bytes = is->read_bytes;
+-  st->write_bytes = is->write_bytes;
+-}
+-
+-void
+-iostats_incr_read(struct iostats *is, uint n){
+-  is->read_bytes += n;
+-}
+-
+-
+-void
+-iostats_incr_write(struct iostats *is, uint n){
+-  is->write_bytes += n;
+-}
+-void
+-iostats_set_read(struct iostats *is, uint n){
+-  is->read_bytes = n;
+-}
+-
+-void
+-iostats_set_write(struct iostats *is, uint n){
+-  is->write_bytes = n;
+-}
+-
+-void
+-iostats_clear(struct iostats *is){
+-  is->read_bytes = 0;
+-  is->write_bytes = 0;
+-}
+-
+-//////////////// io stats functions //////////////////
+-//////////////////////////////////////////////////////
+-
+-
+-//PAGEBREAK!
+ // Read data from inode.
+ // Caller must hold ip->lock.
+ int
+diff --git a/hw09/unnas-hw09/xv6/stat.h b/hw09/unnas-hw09/xv6/stat.h
+index abd1fee..8a80933 100644
+--- a/hw09/unnas-hw09/xv6/stat.h
++++ b/hw09/unnas-hw09/xv6/stat.h
+@@ -9,9 +9,3 @@ struct stat {
+   short nlink; // Number of links to file
+   uint size;   // Size of file in bytes
+ };
+-
+-// Keep track of total number of bytes read/written to a file
+-struct iostats {
+-	uint read_bytes;
+-	uint write_bytes;
+-};
+diff --git a/hw09/unnas-hw09/xv6/syscall.c b/hw09/unnas-hw09/xv6/syscall.c
+index 3962bf7..91c5a04 100644
+--- a/hw09/unnas-hw09/xv6/syscall.c
++++ b/hw09/unnas-hw09/xv6/syscall.c
+@@ -104,32 +104,30 @@ extern int sys_wait(void);
+ extern int sys_write(void);
+ extern int sys_uptime(void);
+ extern int sys_halt(void);
+-extern int sys_getiostats(void); // system call function for getiostats
+ 
+ static int (*syscalls[])(void) = {
+ [SYS_fork]    sys_fork,
+ [SYS_exit]    sys_exit,
+ [SYS_wait]    sys_wait,
+ [SYS_pipe]    sys_pipe,
+-[SYS_read]    sys_read,  // read a file
++[SYS_read]    sys_read,
+ [SYS_kill]    sys_kill,
+ [SYS_exec]    sys_exec,
+-[SYS_fstat]   sys_fstat, // requires filling in a structure
++[SYS_fstat]   sys_fstat,
+ [SYS_chdir]   sys_chdir,
+ [SYS_dup]     sys_dup,
+ [SYS_getpid]  sys_getpid,
+ [SYS_sbrk]    sys_sbrk,
+ [SYS_sleep]   sys_sleep,
+-[SYS_uptime]  sys_uptime, // simple syscall
+-[SYS_open]    sys_open,   // open a file
+-[SYS_write]   sys_write,  // write a file
++[SYS_uptime]  sys_uptime,
++[SYS_open]    sys_open,
++[SYS_write]   sys_write,
+ [SYS_mknod]   sys_mknod,
+ [SYS_unlink]  sys_unlink,
+ [SYS_link]    sys_link,
+ [SYS_mkdir]   sys_mkdir,
+-[SYS_close]   sys_close,  // close a file
+-[SYS_halt]    sys_halt, // added by prof tuck
+-[SYS_getiostats]  sys_getiostats,
++[SYS_close]   sys_close,
++[SYS_halt]    sys_halt,
+ };
+ 
+ void
+diff --git a/hw09/unnas-hw09/xv6/syscall.h b/hw09/unnas-hw09/xv6/syscall.h
+index e23daf3..9edcf12 100644
+--- a/hw09/unnas-hw09/xv6/syscall.h
++++ b/hw09/unnas-hw09/xv6/syscall.h
+@@ -21,4 +21,3 @@
+ #define SYS_mkdir  20
+ #define SYS_close  21
+ #define SYS_halt   22
+-#define SYS_getiostats 23
+diff --git a/hw09/unnas-hw09/xv6/sysfile.c b/hw09/unnas-hw09/xv6/sysfile.c
+index cff28a7..bfe61b7 100644
+--- a/hw09/unnas-hw09/xv6/sysfile.c
++++ b/hw09/unnas-hw09/xv6/sysfile.c
+@@ -46,7 +46,6 @@ fdalloc(struct file *f)
+   for(fd = 0; fd < NOFILE; fd++){
+     if(curproc->ofile[fd] == 0){
+       curproc->ofile[fd] = f;
+-      iostats_clear(f->byte_mem);
+       return fd;
+     }
+   }
+@@ -76,7 +75,6 @@ sys_read(void)
+ 
+   if(argfd(0, 0, &f) < 0 || argint(2, &n) < 0 || argptr(1, &p, n) < 0)
+     return -1;
+-
+   return fileread(f, p, n);
+ }
+ 
+@@ -89,8 +87,7 @@ sys_write(void)
+ 
+   if(argfd(0, 0, &f) < 0 || argint(2, &n) < 0 || argptr(1, &p, n) < 0)
+     return -1;
+-
+-  return filewrite(f, p, n);;
++  return filewrite(f, p, n);
+ }
+ 
+ int
+@@ -101,12 +98,6 @@ sys_close(void)
+ 
+   if(argfd(0, &fd, &f) < 0)
+     return -1;
+-
+-  struct iostats *is = f->byte_mem;
+-  is->read_bytes = 0;
+-  is->write_bytes = 0;
+-  f->byte_mem = is;
+-
+   myproc()->ofile[fd] = 0;
+   fileclose(f);
+   return 0;
+@@ -123,18 +114,6 @@ sys_fstat(void)
+   return filestat(f, st);
+ }
+ 
+-// Direct system call to get file's io data
+-int
+-sys_getiostats(void)
+-{
+-  struct file *f;
+-  struct iostats *st;
+-
+-  if(argfd(0, 0, &f) < 0 || argptr(1, (void*)&st, sizeof(*st)) < 0)
+-    return -1;
+-  return fileiostats(f, st);
+-}
+-
+ // Create the path new as a link to the same inode as old.
+ int
+ sys_link(void)
+@@ -345,14 +324,11 @@ sys_open(void)
+   iunlock(ip);
+   end_op();
+ 
+-
+   f->type = FD_INODE;
+   f->ip = ip;
+   f->off = 0;
+   f->readable = !(omode & O_WRONLY);
+   f->writable = (omode & O_WRONLY) || (omode & O_RDWR);
+-
+-
+   return fd;
+ }
+ 
+@@ -437,13 +413,9 @@ sys_exec(void)
+       argv[i] = 0;
+       break;
+     }
+-
+     if(fetchstr(uarg, &argv[i]) < 0)
+       return -1;
+   }
+-
+-  filecleariostats();
+-
+   return exec(path, argv);
+ }
+ 
+diff --git a/hw09/unnas-hw09/xv6/sysproc.c b/hw09/unnas-hw09/xv6/sysproc.c
+index ae0df2b..98b117e 100644
+--- a/hw09/unnas-hw09/xv6/sysproc.c
++++ b/hw09/unnas-hw09/xv6/sysproc.c
+@@ -6,7 +6,6 @@
+ #include "memlayout.h"
+ #include "mmu.h"
+ #include "proc.h"
+-#include "stat.h"
+ 
+ int
+ sys_fork(void)
+diff --git a/hw09/unnas-hw09/xv6/user.h b/hw09/unnas-hw09/xv6/user.h
+index 7bb6ceb..14f64db 100644
+--- a/hw09/unnas-hw09/xv6/user.h
++++ b/hw09/unnas-hw09/xv6/user.h
+@@ -1,6 +1,5 @@
+ struct stat;
+ struct rtcdate;
+-struct iostats;
+ 
+ // system calls
+ int fork(void);
+@@ -25,7 +24,6 @@ char* sbrk(int);
+ int sleep(int);
+ int uptime(void);
+ int halt(void);
+-int getiostats(int fd, struct iostats*);
+ 
+ // ulib.c
+ int stat(const char*, struct stat*);
+diff --git a/hw09/unnas-hw09/xv6/usys.S b/hw09/unnas-hw09/xv6/usys.S
+index 53fa6ab..0d4eaed 100644
+--- a/hw09/unnas-hw09/xv6/usys.S
++++ b/hw09/unnas-hw09/xv6/usys.S
+@@ -30,4 +30,3 @@ SYSCALL(sbrk)
+ SYSCALL(sleep)
+ SYSCALL(uptime)
+ SYSCALL(halt)
+-SYSCALL(getiostats)
+\ No newline at end of file
